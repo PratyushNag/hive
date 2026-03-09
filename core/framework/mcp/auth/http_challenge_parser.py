@@ -9,8 +9,8 @@ from typing import Any
 from framework.mcp.auth.models import MCPAuthChallenge
 
 
-class MCPAuthChallengeParser:
-    """Parses WWW-Authenticate/body hints into MCPAuthChallenge."""
+class MCPHTTPAuthChallengeParser:
+    """Parses HTTP 401 hints (WWW-Authenticate/body) into MCPAuthChallenge."""
 
     AUTH_URL_KEYS = (
         "auth_url",

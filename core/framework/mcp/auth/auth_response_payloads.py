@@ -9,8 +9,8 @@ from framework.mcp.integrations.base import MCPIntegrationAdapter
 from framework.mcp.models import MCPServerConfig
 
 
-class MCPAuthPayloadBuilder:
-    """Builds stable auth payloads consumed by caller/UI layers."""
+class MCPAuthResponsePayloadFactory:
+    """Builds auth-required payloads consumed by caller/UI layers."""
 
     def build_auth_required(
         self, config: MCPServerConfig, challenge: MCPAuthChallenge

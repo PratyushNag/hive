@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from framework.mcp.auth.challenge_parser import MCPAuthChallengeParser
+from framework.mcp.auth.auth_response_payloads import MCPAuthResponsePayloadFactory
+from framework.mcp.auth.http_challenge_parser import MCPHTTPAuthChallengeParser
 from framework.mcp.auth.models import MCPAuthChallenge, MCPAuthDecision
-from framework.mcp.auth.payload_builder import MCPAuthPayloadBuilder
 from framework.mcp.auth.strategy import ScopeAAuthStrategy
 from framework.mcp.auth.token_store import MCPTokenStore
 from framework.mcp.integrations.registry import MCPIntegrationRegistry
@@ -21,14 +21,14 @@ class MCPAuthManager:
         token_store: MCPTokenStore | None = None,
         integration_registry: MCPIntegrationRegistry | None = None,
         strategy: ScopeAAuthStrategy | None = None,
-        challenge_parser: MCPAuthChallengeParser | None = None,
-        payload_builder: MCPAuthPayloadBuilder | None = None,
+        challenge_parser: MCPHTTPAuthChallengeParser | None = None,
+        payload_factory: MCPAuthResponsePayloadFactory | None = None,
     ):
         self._token_store = token_store or MCPTokenStore()
         self._integration_registry = integration_registry or MCPIntegrationRegistry()
         self._strategy = strategy or ScopeAAuthStrategy()
-        self._challenge_parser = challenge_parser or MCPAuthChallengeParser()
-        self._payload_builder = payload_builder or MCPAuthPayloadBuilder()
+        self._challenge_parser = challenge_parser or MCPHTTPAuthChallengeParser()
+        self._payload_factory = payload_factory or MCPAuthResponsePayloadFactory()
 
     def resolve_unauthorized(
         self,
@@ -47,8 +47,8 @@ class MCPAuthManager:
             challenge=challenge,
             token=token,
             token_already_tried=token_already_tried,
-            auth_required_payload=self._payload_builder.build_auth_required(config, challenge),
-            auth_required_external_payload=self._payload_builder.build_auth_required_external(
+            auth_required_payload=self._payload_factory.build_auth_required(config, challenge),
+            auth_required_external_payload=self._payload_factory.build_auth_required_external(
                 config,
                 challenge,
                 adapter,
@@ -63,7 +63,7 @@ class MCPAuthManager:
     def _build_auth_required_payload(
         self, config: MCPServerConfig, challenge: MCPAuthChallenge
     ) -> dict[str, Any]:
-        return self._payload_builder.build_auth_required(config, challenge)
+        return self._payload_factory.build_auth_required(config, challenge)
 
     def _build_auth_required_external_payload(
         self,
@@ -72,6 +72,6 @@ class MCPAuthManager:
         credential_candidates: list[str],
     ) -> dict[str, Any]:
         adapter = self._integration_registry.resolve(config, challenge)
-        return self._payload_builder.build_auth_required_external(
+        return self._payload_factory.build_auth_required_external(
             config, challenge, adapter, credential_candidates
         )

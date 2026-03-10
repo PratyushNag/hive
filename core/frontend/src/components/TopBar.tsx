@@ -134,6 +134,16 @@ export default function TopBar({ tabs: tabsProp, onTabClick, onCloseTab, canClos
           {children}
         </div>
       )}
+      {!children && (
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button
+            onClick={() => navigate("/mcp-manager")}
+            className="px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+          >
+            MCP Manager
+          </button>
+        </div>
+      )}
     </div>
   );
 }

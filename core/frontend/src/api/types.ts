@@ -212,6 +212,54 @@ export interface ToolInfo {
   parameters: Record<string, unknown>;
 }
 
+// --- MCP manager types ---
+
+export interface McpSecretRef {
+  credential_id: string;
+  key_name?: string;
+  prefix?: string;
+}
+
+export type McpSecretMapValue = string | McpSecretRef;
+
+export interface McpServerRecord {
+  id: string;
+  name: string;
+  description: string;
+  transport: "stdio" | "http";
+  command: string | null;
+  args: string[];
+  cwd: string | null;
+  env: Record<string, McpSecretMapValue>;
+  url: string | null;
+  headers: Record<string, McpSecretMapValue>;
+  rpc_paths: string[];
+  oauth_credential_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface McpOperationEnvelope {
+  ok: boolean;
+  status: string;
+  message: string;
+  server_id: string | null;
+  server_name: string | null;
+  raw: Record<string, unknown>;
+}
+
+export interface McpToolsResponse extends McpOperationEnvelope {
+  tools?: Array<Record<string, unknown>>;
+}
+
+export interface McpInvokeRequest {
+  server_id?: string;
+  server_name?: string;
+  tool_name: string;
+  tool_arguments: Record<string, unknown>;
+  timeout_ms?: number;
+}
+
 // --- Log types ---
 
 export interface LogEntry {

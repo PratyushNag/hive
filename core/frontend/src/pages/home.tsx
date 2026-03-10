@@ -168,6 +168,13 @@ export default function Home() {
               <Bot className="w-4 h-4 text-primary/60" />
               <span>My Agents</span>
             </button>
+            <button
+              onClick={() => navigate("/mcp-manager")}
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+            >
+              <Hexagon className="w-4 h-4 text-primary/60" />
+              <span>MCP Manager</span>
+            </button>
           </div>
 
           {/* Prompt hint pills */}

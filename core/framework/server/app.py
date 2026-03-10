@@ -124,7 +124,7 @@ async def cors_middleware(request: web.Request, handler):
 
     if _is_cors_allowed(origin):
         response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         response.headers["Access-Control-Max-Age"] = "3600"
 
@@ -205,6 +205,10 @@ def create_app(model: str | None = None) -> web.Application:
     app["credential_store"] = credential_store
     app["manager"] = SessionManager(model=model, credential_store=credential_store)
 
+    from framework.mcp.manager import MCPManagerService
+
+    app["mcp_manager"] = MCPManagerService(credential_store=credential_store)
+
     # Register shutdown hook
     app.on_shutdown.append(_on_shutdown)
 
@@ -217,9 +221,11 @@ def create_app(model: str | None = None) -> web.Application:
     from framework.server.routes_execution import register_routes as register_execution_routes
     from framework.server.routes_graphs import register_routes as register_graph_routes
     from framework.server.routes_logs import register_routes as register_log_routes
+    from framework.server.routes_mcp import register_routes as register_mcp_routes
     from framework.server.routes_sessions import register_routes as register_session_routes
 
     register_credential_routes(app)
+    register_mcp_routes(app)
     register_execution_routes(app)
     register_event_routes(app)
     register_session_routes(app)

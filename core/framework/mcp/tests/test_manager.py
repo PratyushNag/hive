@@ -88,9 +88,7 @@ def _stdio_payload(name: str = "local-tools") -> dict:
         "command": "uv",
         "args": ["run", "python", "mcp_server.py", "--stdio"],
         "cwd": "../tools",
-        "env": {
-            "MCP_TOKEN": {"credential_id": "token_store", "key_name": "access_token"}
-        },
+        "env": {"MCP_TOKEN": {"credential_id": "token_store", "key_name": "access_token"}},
         "oauth_credential_id": "token_store",
     }
 

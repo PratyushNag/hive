@@ -76,9 +76,7 @@ def _validate_secret_ref(value: Any, field_name: str) -> dict[str, str]:
 
     unexpected = set(value.keys()) - {"credential_id", "key_name", "prefix"}
     if unexpected:
-        raise MCPManagerValidationError(
-            f"Unexpected keys in {field_name}: {sorted(unexpected)}"
-        )
+        raise MCPManagerValidationError(f"Unexpected keys in {field_name}: {sorted(unexpected)}")
 
     return normalized
 
@@ -100,7 +98,8 @@ def _validate_secret_map(
         if isinstance(value, str):
             if _is_sensitive_key(key):
                 raise MCPManagerValidationError(
-                    f"{field_name}.{key} looks sensitive. Use credential ref object instead of plain string."
+                    f"{field_name}.{key} looks sensitive. "
+                    "Use credential ref object instead of plain string."
                 )
             # Preserve explicit literals for non-sensitive keys.
             normalized[key] = value
@@ -109,12 +108,11 @@ def _validate_secret_map(
         if isinstance(value, dict) and set(value.keys()) == {"literal"}:
             literal = value.get("literal")
             if not isinstance(literal, str):
-                raise MCPManagerValidationError(
-                    f"{field_name}.{key}.literal must be a string"
-                )
+                raise MCPManagerValidationError(f"{field_name}.{key}.literal must be a string")
             if _is_sensitive_key(key):
                 raise MCPManagerValidationError(
-                    f"{field_name}.{key} looks sensitive. Use credential ref object instead of plain string."
+                    f"{field_name}.{key} looks sensitive. "
+                    "Use credential ref object instead of plain string."
                 )
             normalized[key] = literal
             continue
@@ -528,7 +526,9 @@ class MCPManagerService:
             headers = _validate_secret_map(payload.get("headers", {}), "headers")
 
             rpc_paths = payload.get("rpc_paths", [])
-            if not isinstance(rpc_paths, list) or not all(isinstance(path, str) for path in rpc_paths):
+            if not isinstance(rpc_paths, list) or not all(
+                isinstance(path, str) for path in rpc_paths
+            ):
                 raise MCPManagerValidationError("rpc_paths must be a string array")
 
             if payload.get("command") not in (None, ""):
